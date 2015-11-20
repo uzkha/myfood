@@ -30,7 +30,7 @@ public class LoginActivity extends AbstractActivity {
 
     private void cadastrar() {
 
-        final LayoutInflater inflater = getLayoutInflater();
+      /*  final LayoutInflater inflater = getLayoutInflater();
 
         //chama a intent de cadastro
         new AlertDialog.Builder(this)
@@ -46,8 +46,38 @@ public class LoginActivity extends AbstractActivity {
                     }
                 }).setNegativeButton("Cancelar", null)
                 .create()
-                .show();
+                .show();*/
+
+
+        LayoutInflater li = getLayoutInflater();
+
+        View view = li.inflate(R.layout.activity_cadastro, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Criando novo arquivo de apresentação");
+        builder.setView(view);
+
+        builder.setPositiveButton("Salvar",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        EditText edEmail = (EditText) ((Dialog) dialog).findViewById(R.id.edEmail);
+                        String email = edEmail.getText().toString();
+
+                        Log.d("tag", "Email " + email);
+
+
+                    }
+
+                });
+        builder.setNegativeButton("Canceler", null);
+        builder.show();
 
     }
 
+
+
 }
+
+
