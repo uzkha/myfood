@@ -1,5 +1,6 @@
 package br.edu.imed.myfood;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
@@ -10,7 +11,28 @@ public class AbstractActivity extends AppCompatActivity {
 
     final String TAG = this.getClass().getSimpleName();
 
+    public static final String PREFS_NAME = "MyFoodPrefsFile";
+
     void showMessage(String s, int tempo){
         Toast.makeText(this, s, tempo).show();
     }
+
+
+    void setarUsuarioSessao(Long id) {
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong("usuarioId", id);
+
+
+    }
+
+    Long buscarUsuarioSessao(){
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        return  settings.getLong("usuarioId", 0);
+
+
+    }
+
 }

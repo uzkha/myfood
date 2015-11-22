@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 public class MainActivity extends AbstractActivity {
 
-    boolean logado;
+    Long usuarioId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,21 +14,23 @@ public class MainActivity extends AbstractActivity {
         setContentView(R.layout.activity_main);
 
         //verifica se o usuario já esta logado
-        logado = verificarLogin();
+        usuarioId = verificarLogin();
 
         //usuario não logado, abre activity de login
-        if(logado == false) {
+        if(usuarioId < 1) {
 
             Intent i = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(i);
 
+            finish();
 
         }
 
     }
 
-    private boolean verificarLogin() {
-        return false;
+    private Long verificarLogin() {
+        return buscarUsuarioSessao();
     }
+
 
 }

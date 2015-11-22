@@ -3,13 +3,14 @@ package br.edu.imed.myfood;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import br.edu.imed.myfood.bd.Dao;
+import br.edu.imed.myfood.model.Usuario;
 
 public class LoginActivity extends AbstractActivity {
 
@@ -22,57 +23,138 @@ public class LoginActivity extends AbstractActivity {
         findViewById(R.id.txCadastrar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cadastrar();
+
+                try {
+                    cadastrar();
+                } catch (Exception e) {
+                    showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+                }
+            }
+        });
+
+        findViewById(R.id.btnLogin).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    logar();
+                } catch (Exception e) {
+                    showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+                }
             }
         });
 
     }
 
-    private void cadastrar() {
+    private void logar() throws Exception{
 
-      /*  final LayoutInflater inflater = getLayoutInflater();
+            EditText edEmail = (EditText) findViewById(R.id.edEmailLogin);
+            String email = edEmail.getText().toString();
 
-        //chama a intent de cadastro
-        new AlertDialog.Builder(this)
-                .setTitle("Cadastro")
-                .setView(inflater.inflate(R.layout.activity_cadastro, null))
-                .setPositiveButton("Salvar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            EditText edSenha = (EditText) findViewById(R.id.edSenhaLogin);
+            String senha = edSenha.getText().toString();
 
-                        //String nome = edNome.getText().toString();
-                        //showMessage(nome, Toast.LENGTH_SHORT);
+            validarLogin(email, senha);
 
-                    }
-                }).setNegativeButton("Cancelar", null)
-                .create()
-                .show();*/
+    }
+
+    private void validarLogin(String email, String senha) {
+
+    }
 
 
-        LayoutInflater li = getLayoutInflater();
+    private void cadastrar() throws Exception{
 
-        View view = li.inflate(R.layout.activity_cadastro, null);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Criando novo arquivo de apresentação");
-        builder.setView(view);
+            LayoutInflater li = getLayoutInflater();
 
-        builder.setPositiveButton("Salvar",
-                new DialogInterface.OnClickListener() {
+            View view = li.inflate(R.layout.activity_cadastro, null);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Criando novo arquivo de apresentação");
+            builder.setView(view);
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            builder.setPositiveButton("Salvar",
+                    new DialogInterface.OnClickListener()  {
 
-                        EditText edEmail = (EditText) ((Dialog) dialog).findViewById(R.id.edEmail);
-                        String email = edEmail.getText().toString();
+                        @Override
+                        public void onClick(DialogInterface dialog, int which){
 
-                        Log.d("tag", "Email " + email);
+                            try {
+
+                                EditText edNome = (EditText) ((Dialog) dialog).findViewById(R.id.edNome);
+                                String nome = edNome.getText().toString();
+
+                                EditText edEmail = (EditText) ((Dialog) dialog).findViewById(R.id.edEmail);
+                                String email = edEmail.getText().toString();
+
+                                EditText edSenha = (EditText) ((Dialog) dialog).findViewById(R.id.edSenha);
+                                String senha = edSenha.getText().toString();
+
+                                Usuario usuario = criarObjetoUsuario(null, nome, email, senha);
+
+                                validarUsuario(usuario);
+
+                                salvarUsuario(usuario);
+
+                                setarEmail(email, senha);
+
+                                showMessage("Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT);
+
+                            }catch (Exception e){
+                                showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+                            }
+
+                        }
+
+                    });
+
+            builder.setNegativeButton("Canceler", null);
+            builder.show();
 
 
-                    }
 
-                });
-        builder.setNegativeButton("Canceler", null);
-        builder.show();
+    }
+
+    private void setarEmail(String email, String senha) {
+
+        EditText edEmail = (EditText) findViewById(R.id.edEmailLogin);
+        EditText edSenha = (EditText) findViewById(R.id.edSenhaLogin);
+
+        edEmail.setText(email);
+        edSenha.setText(senha);
+    }
+
+    private void validarUsuario(Usuario usuario) throws Exception{
+
+        if(usuario.getNome().length() < 1){
+            throw new Exception("Informe o nome do usuário.");
+        }
+
+        if(usuario.getEmail().length() < 1){
+            throw new Exception("Informe o email");
+        }
+
+        if(usuario.getSenha().length() < 1){
+            throw new Exception("Informe a senha");
+        }
+
+    }
+
+    private void salvarUsuario(Usuario usuario) throws Exception{
+
+        Dao usuarioDao = new Dao(this);
+        usuarioDao.salvarUsuario(usuario);
+
+    }
+
+    private Usuario criarObjetoUsuario(Long id, String nome, String email, String senha){
+
+        Usuario usuario = new Usuario();
+
+        usuario.setId(id);
+        usuario.setNome(nome);
+        usuario.setEmail(email);
+        usuario.setSenha(senha);
+
+        return usuario;
 
     }
 

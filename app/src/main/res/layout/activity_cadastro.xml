@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Senha"
-        android:id="@+id/edSenha" />
+        android:id="@+id/txSenha" />
 
     <EditText
         android:layout_width="match_parent"
