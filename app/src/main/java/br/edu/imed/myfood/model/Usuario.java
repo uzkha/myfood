@@ -13,6 +13,8 @@ public class Usuario {
 
     private String senha;
 
+    private String senhaCfm;
+
     public Long getId() {
         return id;
     }
@@ -43,5 +45,13 @@ public class Usuario {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getSenhaCfm() {
+        return senhaCfm;
+    }
+
+    public void setSenhaCfm(String senhaCfm) {
+        this.senhaCfm = senhaCfm;
     }
 }

@@ -6,8 +6,8 @@ package br.edu.imed.myfood.bd;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.widget.Toast;
 
 import br.edu.imed.myfood.model.Usuario;
 
@@ -24,15 +24,19 @@ public class Dao {
         this.context = context;
     }
 
-    private SQLiteDatabase criarConexao(){
+    private SQLiteDatabase criarConexaoWrite(){
         SQLiteDatabase db = new DataBaseHelper(this.context).getWritableDatabase();
         return db;
     }
 
+    private SQLiteDatabase criarConexaoRead(){
+        SQLiteDatabase db = new DataBaseHelper(this.context).getReadableDatabase();
+        return db;
+    }
 
     public void salvarUsuario(Usuario usuario) throws Exception{
 
-        SQLiteDatabase db = criarConexao();
+        SQLiteDatabase db = criarConexaoWrite();
 
         ContentValues valores = new ContentValues();
         valores.put("nome", usuario.getNome());
@@ -47,4 +51,33 @@ public class Dao {
         }
 
     }
+
+    public Long validarLogin(String email, String senha){
+
+        Long usuarioId = Long.valueOf(0);
+
+        SQLiteDatabase db = criarConexaoRead();
+
+        Cursor cursor =  db.rawQuery("SELECT _id FROM usuario where email = '" + email + "' and senha = '" + senha + "'",  null);
+
+        //move cursor para primeiro registro
+        cursor.moveToFirst();
+
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+
+            usuarioId  = Long.valueOf(String.valueOf(cursor.getInt(0)));
+
+            //move cursor proximo registro
+            cursor.moveToNext();
+        }
+
+        //fecha cursor
+        cursor.close();
+
+        return usuarioId;
+    }
+
+
+
 }

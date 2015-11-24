@@ -24,13 +24,17 @@ public class AbstractActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = settings.edit();
         editor.putLong("usuarioId", id);
 
+        //Confirma a gravação dos dados
+        editor.commit();
 
     }
 
     Long buscarUsuarioSessao(){
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        return  settings.getLong("usuarioId", 0);
+        Long usuarioid =  settings.getLong("usuarioId", 0);
+
+        return usuarioid;
 
 
     }

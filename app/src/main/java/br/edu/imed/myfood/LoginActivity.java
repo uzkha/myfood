@@ -3,6 +3,7 @@ package br.edu.imed.myfood;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,11 +54,26 @@ public class LoginActivity extends AbstractActivity {
             EditText edSenha = (EditText) findViewById(R.id.edSenhaLogin);
             String senha = edSenha.getText().toString();
 
-            validarLogin(email, senha);
+            Long usuarioId = validarLogin(email, senha);
+
+            if(usuarioId > 0){
+
+                //seta shared preferencia
+                setarUsuarioSessao(usuarioId);
+
+                Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(i);
+
+            }else{
+                showMessage("Usuário ou senha inválidos.", Toast.LENGTH_SHORT);
+            }
 
     }
 
-    private void validarLogin(String email, String senha) {
+    private Long validarLogin(String email, String senha) {
+
+        Dao usuarioDao = new Dao(this);
+        return usuarioDao.validarLogin(email, senha);
 
     }
 
@@ -88,7 +104,10 @@ public class LoginActivity extends AbstractActivity {
                                 EditText edSenha = (EditText) ((Dialog) dialog).findViewById(R.id.edSenha);
                                 String senha = edSenha.getText().toString();
 
-                                Usuario usuario = criarObjetoUsuario(null, nome, email, senha);
+                                EditText edSenhaCfm = (EditText) ((Dialog) dialog).findViewById(R.id.edSenhaCfm);
+                                String senhaCfm = edSenhaCfm.getText().toString();
+
+                                Usuario usuario = criarObjetoUsuario(null, nome, email, senha, senhaCfm);
 
                                 validarUsuario(usuario);
 
@@ -136,6 +155,10 @@ public class LoginActivity extends AbstractActivity {
             throw new Exception("Informe a senha");
         }
 
+        if(! usuario.getSenha().equals( usuario.getSenhaCfm())){
+            throw new Exception("Senhas digitadas não conferem.");
+        }
+
     }
 
     private void salvarUsuario(Usuario usuario) throws Exception{
@@ -145,7 +168,7 @@ public class LoginActivity extends AbstractActivity {
 
     }
 
-    private Usuario criarObjetoUsuario(Long id, String nome, String email, String senha){
+    private Usuario criarObjetoUsuario(Long id, String nome, String email, String senha, String senhaCfm){
 
         Usuario usuario = new Usuario();
 
@@ -153,6 +176,7 @@ public class LoginActivity extends AbstractActivity {
         usuario.setNome(nome);
         usuario.setEmail(email);
         usuario.setSenha(senha);
+        usuario.setSenhaCfm(senhaCfm);
 
         return usuario;
 
