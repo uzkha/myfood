@@ -1,4 +1,4 @@
-package br.edu.imed.myfood.bd;
+package br.edu.imed.myfood.db;
 
 /**
  * Created by diogo on 22/11/2015.
@@ -15,12 +15,17 @@ import br.edu.imed.myfood.model.Usuario;
 /**
  * Created by diogo on 22/11/2015.
  */
-public class Dao {
+public class UsuarioDao {
 
     private Context context;
 
+    static final String tableUsuario = "usuario";
+    static final String ID = "_id";
+    static final String NOME = "nome";
+    static final String EMAIL = "email";
+    static final String SENHA = "senha";
 
-    public Dao(Context context){
+    public UsuarioDao(Context context){
         this.context = context;
     }
 
@@ -34,15 +39,15 @@ public class Dao {
         return db;
     }
 
-    public void salvarUsuario(Usuario usuario) throws Exception{
+    public void salvar(Usuario usuario) throws Exception{
 
         SQLiteDatabase db = criarConexaoWrite();
 
         ContentValues valores = new ContentValues();
-        valores.put("nome", usuario.getNome());
-        valores.put("email", usuario.getEmail());
-        valores.put("senha", usuario.getSenha());
-        long rs = db.insert("usuario", null, valores);
+        valores.put(NOME, usuario.getNome());
+        valores.put(EMAIL, usuario.getEmail());
+        valores.put(SENHA, usuario.getSenha());
+        long rs = db.insert(tableUsuario, null, valores);
 
         db.close();
 
@@ -58,7 +63,7 @@ public class Dao {
 
         SQLiteDatabase db = criarConexaoRead();
 
-        Cursor cursor =  db.rawQuery("SELECT _id FROM usuario where email = '" + email + "' and senha = '" + senha + "'",  null);
+        Cursor cursor =  db.rawQuery("SELECT "  + ID + " FROM " +  tableUsuario + " where "+ EMAIL + " = '" + email + "' and " + SENHA +" = '" + senha + "'",  null);
 
         //move cursor para primeiro registro
         cursor.moveToFirst();

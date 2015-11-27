@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import br.edu.imed.myfood.bd.Dao;
+import br.edu.imed.myfood.db.UsuarioDao;
 import br.edu.imed.myfood.model.Usuario;
 
 public class LoginActivity extends AbstractActivity {
@@ -72,7 +72,7 @@ public class LoginActivity extends AbstractActivity {
 
     private Long validarLogin(String email, String senha) {
 
-        Dao usuarioDao = new Dao(this);
+        UsuarioDao usuarioDao = new UsuarioDao(this);
         return usuarioDao.validarLogin(email, senha);
 
     }
@@ -163,8 +163,8 @@ public class LoginActivity extends AbstractActivity {
 
     private void salvarUsuario(Usuario usuario) throws Exception{
 
-        Dao usuarioDao = new Dao(this);
-        usuarioDao.salvarUsuario(usuario);
+        UsuarioDao usuarioDao = new UsuarioDao(this);
+        usuarioDao.salvar(usuario);
 
     }
 

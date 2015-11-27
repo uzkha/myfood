@@ -1,4 +1,4 @@
-package br.edu.imed.myfood.bd;
+package br.edu.imed.myfood.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,19 +10,20 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     static final int VERSION = 1;
+    static final String DB_NAME = "myfood";
 
     public DataBaseHelper(Context context) {
-        super(context, "myfood", null, VERSION);
+        super(context, DB_NAME, null, VERSION);
     }
 
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-       db.execSQL("CREATE TABLE USUARIO(" +
-                  " _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                  " NOME VARCHAR(100)," +
-                  " EMAIL VARCHAR(100)," +
-                  " SENHA VARCHAR(64)" +
+       db.execSQL("CREATE TABLE " + UsuarioDao.tableUsuario +"("
+                  + UsuarioDao.ID + "  INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                  + UsuarioDao.NOME + " VARCHAR(100)," +
+                  + UsuarioDao.EMAIL + "  VARCHAR(100)," +
+                  + UsuarioDao.SENHA + " SENHA VARCHAR(64)" +
                   ")");
     }
 
