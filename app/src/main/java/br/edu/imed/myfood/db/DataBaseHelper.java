@@ -30,7 +30,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
                 + ReceitaDao.ID + "  INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ReceitaDao.NOME + " VARCHAR(100),"
                 + ReceitaDao.INGREDIENTE + "  TEXT,"
-                + ReceitaDao.PREPARO + " TEXT"
+                + ReceitaDao.PREPARO + " TEXT,"
+                + ReceitaDao.PATHIMAGEM + " TEXT,"
+                + ReceitaDao.USUARIOID + " INTEGER "
                 + ")");
     }
 

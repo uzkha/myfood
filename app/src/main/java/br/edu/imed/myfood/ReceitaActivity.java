@@ -1,6 +1,8 @@
 package br.edu.imed.myfood;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
@@ -10,17 +12,29 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 import br.edu.imed.myfood.db.ReceitaDao;
 import br.edu.imed.myfood.model.Receita;
 
 public class ReceitaActivity extends AbstractActivity {
 
-    static final String PATH = "myfoodimg/";
-    String nome = "";
+    static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myfood/receitas/imagens/";
+    String nome;
+    File file;
+    String pathImagem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +72,118 @@ public class ReceitaActivity extends AbstractActivity {
             }
         });
 
+        findViewById(R.id.btnGallery).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                capturarImagemGallery();
+            }
+        });
+
+    }
+
+    private void capturarImagemGallery() {
+
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, 1);
+
     }
 
     private void capturarImagem() {
 
-        nome = new java.util.Date().toString();
+        nome = new java.util.Date().toString() + ".jpg";
 
-        Log.i("data", nome);
+        pathImagem = PATH + nome;
 
-        File file = new File(Environment.getExternalStorageDirectory(),"myfoodimg" + "nome");
+        file = new File(pathImagem);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file) );
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
         startActivityForResult(cameraIntent, 2);
 
     }
 
+
+    public void copy(InputStream in) throws IOException {
+
+        File direct = new File(PATH);
+
+        if (!direct.exists()) {
+            direct.mkdirs();
+        }
+
+        File file = new File(pathImagem);
+
+        OutputStream out = new FileOutputStream(file);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+
+            try {
+
+                nome = new java.util.Date().toString() + ".jpg";
+
+                pathImagem = PATH + nome;
+
+                ImageView imageView = (ImageView) findViewById(R.id.imvReceita);
+
+                InputStream inputStream    = getContentResolver().openInputStream(data.getData());
+                InputStream inputStreamBmp = getContentResolver().openInputStream(data.getData());
+
+                copy(inputStream);
+
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
+
+                bitmap = Bitmap.createScaledBitmap(bitmap, 300, 400, false);
+
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setImageBitmap(bitmap);
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+            } catch (IOException e) {
+                e.printStackTrace();
+                showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+            }catch (Exception e){
+                e.printStackTrace();
+                showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+            }
+        }
+
+        if (requestCode == 2 && resultCode == RESULT_OK) {
+
+            Bitmap myBitmap = null;
+            try {
+                myBitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+            }
+
+            myBitmap = Bitmap.createScaledBitmap(myBitmap, 300, 400, false);
+
+            ImageView imageView = (ImageView) findViewById(R.id.imvReceita);
+            imageView.setImageBitmap(myBitmap);
+
+        }
+
+    }
 
     private void salvar() throws Exception{
 
@@ -85,7 +196,7 @@ public class ReceitaActivity extends AbstractActivity {
         EditText edIngrediente = (EditText) findViewById(R.id.edIngrediente);
         String ingrediente = edIngrediente.getText().toString();
 
-        Receita receita = criarObjetoReceita(null, nome, ingrediente, preparo);
+        Receita receita = criarObjetoReceita(null, nome, ingrediente, preparo, pathImagem);
 
         validarReceita(receita);
 
@@ -114,10 +225,9 @@ public class ReceitaActivity extends AbstractActivity {
             throw new Exception("Informe o modo de preparo da receita.");
         }
 
-
     }
 
-    private Receita criarObjetoReceita(Long id, String nome, String ingrediente, String preparo) {
+    private Receita criarObjetoReceita(Long id, String nome, String ingrediente, String preparo, String pathImagem) {
 
         Receita receita = new Receita();
 
@@ -125,6 +235,8 @@ public class ReceitaActivity extends AbstractActivity {
         receita.setNome(nome);
         receita.setIngrediente(ingrediente);
         receita.setModoPreparo(preparo);
+        receita.setPathImagem(pathImagem);
+        receita.setUsuarioId(buscarUsuarioSessao());
 
         return receita;
 

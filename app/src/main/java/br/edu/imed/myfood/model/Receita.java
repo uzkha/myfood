@@ -15,6 +15,8 @@ public class Receita {
 
     private String modoPreparo;
 
+    private String pathImagem;
+
     public Long getId() {
         return id;
     }
@@ -53,5 +55,13 @@ public class Receita {
 
     public void setModoPreparo(String modoPreparo) {
         this.modoPreparo = modoPreparo;
+    }
+
+    public String getPathImagem() {
+        return pathImagem;
+    }
+
+    public void setPathImagem(String pathImagem) {
+        this.pathImagem = pathImagem;
     }
 }

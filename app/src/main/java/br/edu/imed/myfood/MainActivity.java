@@ -3,14 +3,29 @@ package br.edu.imed.myfood;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.edu.imed.myfood.db.ReceitaDao;
+import br.edu.imed.myfood.model.Receita;
 
 public class MainActivity extends AbstractActivity {
 
     Long usuarioId;
+
+    List<Receita> lista = new ArrayList<Receita>();
+    ArrayAdapter<Receita> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +50,41 @@ public class MainActivity extends AbstractActivity {
             public void onClick(View v) {
                 try {
                     adicionarReceita();
+                    montarAdapter();
                 } catch (Exception e) {
                     showMessage(e.getMessage(), Toast.LENGTH_SHORT);
                 }
             }
         });
 
+
+        montarAdapter();
+
+
+    }
+
+    @Override
+    public void onResume(){
+
+        montarAdapter();
+        super.onResume();
+    }
+
+
+    private void montarAdapter() {
+
+        lista = listarReceita();
+
+        adapter = new ReceitaAdapter(this, lista);
+
+        ListView listView = (ListView) findViewById(R.id.listViewReceita);
+        listView.setAdapter(adapter);
+    }
+
+    private List<Receita> listarReceita() {
+
+        ReceitaDao receitaDao = new ReceitaDao(this);
+        return receitaDao.listarReceitas(buscarUsuarioSessao());
 
     }
 

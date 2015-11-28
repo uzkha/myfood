@@ -6,7 +6,11 @@ package br.edu.imed.myfood.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import br.edu.imed.myfood.model.Receita;
 
@@ -23,6 +27,8 @@ public class ReceitaDao {
     static final String NOME = "nome";
     static final String INGREDIENTE = "ingrediente";
     static final String PREPARO = "preparo";
+    static final String PATHIMAGEM = "path_imagem";
+    static final String USUARIOID = "usuario_id";
 
     public ReceitaDao(Context context){
         this.context = context;
@@ -46,6 +52,8 @@ public class ReceitaDao {
         valores.put(NOME, receita.getNome());
         valores.put(INGREDIENTE, receita.getIngrediente());
         valores.put(PREPARO, receita.getModoPreparo());
+        valores.put(PATHIMAGEM, receita.getPathImagem());
+        valores.put(USUARIOID, receita.getUsuarioId());
         long rs = db.insert(TABLE, null, valores);
 
         db.close();
@@ -54,6 +62,49 @@ public class ReceitaDao {
             throw new Exception("Receita não cadastrada. -1");
         }
 
+    }
+
+
+
+    public List<Receita> listarReceitas(Long usuarioId){
+
+        SQLiteDatabase db = criarConexaoRead();
+
+        List<Receita> listaReceitas = new ArrayList<Receita>();
+
+
+
+        Cursor cursor =  db.rawQuery("SELECT "+ ID + ", " + NOME + ", "
+                                              + INGREDIENTE + ", "
+                                              + PREPARO + ", "
+                                              + PATHIMAGEM +
+                                              " FROM " +  TABLE + " where " + USUARIOID  + " = " + usuarioId,  null);
+
+
+        //move cursor para primeiro registro
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+
+            Receita receita = new Receita();
+
+            receita.setId(Long.valueOf(String.valueOf(cursor.getInt(0))));
+            receita.setNome(cursor.getString(1));
+            receita.setIngrediente(cursor.getString(2));
+            receita.setModoPreparo(cursor.getString(3));
+            receita.setPathImagem(cursor.getString(4));
+            receita.setUsuarioId(usuarioId);
+
+            listaReceitas.add(receita);
+
+            //move cursor proximo registro
+            cursor.moveToNext();
+        }
+
+        //fecha cursor
+        cursor.close();
+
+        return listaReceitas;
     }
 
 }
