@@ -19,7 +19,7 @@ public class UsuarioDao {
 
     private Context context;
 
-    static final String tableUsuario = "usuario";
+    static final String TABLE = "usuario";
     static final String ID = "_id";
     static final String NOME = "nome";
     static final String EMAIL = "email";
@@ -47,7 +47,7 @@ public class UsuarioDao {
         valores.put(NOME, usuario.getNome());
         valores.put(EMAIL, usuario.getEmail());
         valores.put(SENHA, usuario.getSenha());
-        long rs = db.insert(tableUsuario, null, valores);
+        long rs = db.insert(TABLE, null, valores);
 
         db.close();
 
@@ -63,7 +63,7 @@ public class UsuarioDao {
 
         SQLiteDatabase db = criarConexaoRead();
 
-        Cursor cursor =  db.rawQuery("SELECT "  + ID + " FROM " +  tableUsuario + " where "+ EMAIL + " = '" + email + "' and " + SENHA +" = '" + senha + "'",  null);
+        Cursor cursor =  db.rawQuery("SELECT "  + ID + " FROM " +  TABLE + " where "+ EMAIL + " = '" + email + "' and " + SENHA +" = '" + senha + "'",  null);
 
         //move cursor para primeiro registro
         cursor.moveToFirst();

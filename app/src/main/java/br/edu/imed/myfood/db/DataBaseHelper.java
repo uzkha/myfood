@@ -19,12 +19,19 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-       db.execSQL("CREATE TABLE " + UsuarioDao.tableUsuario +"("
-                  + UsuarioDao.ID + "  INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                  + UsuarioDao.NOME + " VARCHAR(100)," +
-                  + UsuarioDao.EMAIL + "  VARCHAR(100)," +
-                  + UsuarioDao.SENHA + " SENHA VARCHAR(64)" +
-                  ")");
+       db.execSQL("CREATE TABLE " + UsuarioDao.TABLE +"("
+                + UsuarioDao.ID + "  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + UsuarioDao.NOME + " VARCHAR(100),"
+                + UsuarioDao.EMAIL + "  VARCHAR(100),"
+                + UsuarioDao.SENHA + " VARCHAR(64)"
+                + ")");
+
+        db.execSQL("CREATE TABLE " + ReceitaDao.TABLE +"("
+                + ReceitaDao.ID + "  INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ReceitaDao.NOME + " VARCHAR(100),"
+                + ReceitaDao.INGREDIENTE + "  TEXT,"
+                + ReceitaDao.PREPARO + " TEXT"
+                + ")");
     }
 
     @Override

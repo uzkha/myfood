@@ -30,6 +30,23 @@ public class MainActivity extends AbstractActivity {
         }
 
 
+        findViewById(R.id.btnAddReceita).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    adicionarReceita();
+                } catch (Exception e) {
+                    showMessage(e.getMessage(), Toast.LENGTH_SHORT);
+                }
+            }
+        });
+
+
+    }
+
+    private void adicionarReceita() {
+        Intent i = new Intent(MainActivity.this, ReceitaActivity.class);
+        startActivity(i);
     }
 
     private void logout() {

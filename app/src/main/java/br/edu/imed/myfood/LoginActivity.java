@@ -95,7 +95,7 @@ public class LoginActivity extends AbstractActivity {
 
                             try {
 
-                                EditText edNome = (EditText) ((Dialog) dialog).findViewById(R.id.edNome);
+                                EditText edNome = (EditText) ((Dialog) dialog).findViewById(R.id.edNomeReceita);
                                 String nome = edNome.getText().toString();
 
                                 EditText edEmail = (EditText) ((Dialog) dialog).findViewById(R.id.edEmail);
