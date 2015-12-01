@@ -43,16 +43,20 @@ public class ReceitaAdapter extends ArrayAdapter<Receita> {
 
             String path = receita.getPathImagem();
 
-            ImageView imageView = (ImageView) row.findViewById(R.id.imvReceitaItem);
+            if(path != null) {
 
-            InputStream inputStreamBmp = new FileInputStream(path);
+                ImageView imageView = (ImageView) row.findViewById(R.id.imvReceitaItem);
 
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
+                InputStream inputStreamBmp = new FileInputStream(path);
 
-            bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
 
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setImageBitmap(bitmap);
+                bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setImageBitmap(bitmap);
+            }
+
 
             ((TextView)row.findViewById(R.id.txReceitaItem)).setText("  " + receita.getNome().toString());
             ((TextView)row.findViewById(R.id.txId)).setText("  " + receita.getId().toString());

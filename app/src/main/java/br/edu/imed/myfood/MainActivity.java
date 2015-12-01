@@ -61,6 +61,19 @@ public class MainActivity extends AbstractActivity {
         montarAdapter();
 
 
+        ListView lv = (ListView) findViewById(R.id.listViewReceita);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View v, int position,
+                                    long arg3) {
+
+
+                showMessage("clique item " + position, Toast.LENGTH_LONG);
+
+            }
+        });
+
+
     }
 
     @Override
@@ -69,6 +82,7 @@ public class MainActivity extends AbstractActivity {
         montarAdapter();
         super.onResume();
     }
+
 
 
     private void montarAdapter() {
