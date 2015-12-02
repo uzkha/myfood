@@ -1,6 +1,8 @@
 package br.edu.imed.myfood;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,11 +37,27 @@ public class ReceitaActivity extends AbstractActivity {
     String nome;
     File file;
     String pathImagem;
+    Long idReceita;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receita);
+
+
+        //verifica se tem ID na passagem de parametro
+        if(getIntent().hasExtra("ID")){
+
+            idReceita = Long.valueOf(getIntent().getStringExtra("ID"));
+
+            montarReceitaView();
+
+        }
+
+        if(idReceita == null){
+            ImageView imvReceita = (ImageView) findViewById(R.id.btnDelete);
+            imvReceita.setVisibility(View.GONE);
+        }
 
         findViewById(R.id.btnFechar).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +96,92 @@ public class ReceitaActivity extends AbstractActivity {
                 capturarImagemGallery();
             }
         });
+
+        findViewById(R.id.btnDelete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletar();
+            }
+        });
+
+    }
+
+    private void deletar(){
+
+        new AlertDialog.Builder(this)
+                .setTitle("Deletar Receita")
+                .setMessage("Atenção! Confirma a exclusão da Receita?")
+                .setPositiveButton("Deletar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            deletarReceita();
+                        } catch (Exception e) {
+                            showMessage(e.getMessage(), Toast.LENGTH_LONG);
+                        }
+                    }
+                }).setNegativeButton("Cancelar", null)
+                .create()
+                .show();
+
+
+
+    }
+
+    private void deletarReceita() throws Exception{
+
+        ReceitaDao receitaDao = new ReceitaDao(this);
+
+        //busca a receita
+        Receita receita = receitaDao.listarReceita(buscarUsuarioSessao(), idReceita);
+
+        String path = receita.getPathImagem();
+
+        //deleta a receita no banco de dados
+        receitaDao.deletar(buscarUsuarioSessao(), idReceita);
+
+        //deleta a imagem
+        File f = new File(path);
+        f.delete();
+
+        showMessage("Receita excluida com sucesso!", Toast.LENGTH_LONG);
+        finish();
+    }
+
+    private void montarReceitaView() {
+
+        try {
+
+            Receita receita = listarReceita(idReceita);
+
+            EditText edNomeReceita = (EditText) findViewById(R.id.edNomeReceita);
+            EditText edIngrediente = (EditText) findViewById(R.id.edIngrediente);
+            EditText edPreparo = (EditText) findViewById(R.id.edPreparo);
+
+            edNomeReceita.setText(receita.getNome());
+            edIngrediente.setText(receita.getIngrediente());
+            edPreparo.setText(receita.getModoPreparo());
+
+            String path = receita.getPathImagem();
+
+            if (path != null) {
+
+                ImageView imageView = (ImageView) findViewById(R.id.imvReceita);
+
+                InputStream inputStreamBmp = new FileInputStream(path);
+
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
+
+                bitmap = Bitmap.createScaledBitmap(bitmap, 300, 400, false);
+
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setImageBitmap(bitmap);
+            }
+
+
+        }catch (Exception e){
+            showMessage(e.getMessage(), Toast.LENGTH_LONG);
+        }
 
     }
 
@@ -196,7 +300,7 @@ public class ReceitaActivity extends AbstractActivity {
         EditText edIngrediente = (EditText) findViewById(R.id.edIngrediente);
         String ingrediente = edIngrediente.getText().toString();
 
-        Receita receita = criarObjetoReceita(null, nome, ingrediente, preparo, pathImagem);
+        Receita receita = criarObjetoReceita(idReceita, nome, ingrediente, preparo, pathImagem);
 
         validarReceita(receita);
 
@@ -209,6 +313,11 @@ public class ReceitaActivity extends AbstractActivity {
         ReceitaDao receitaDao = new ReceitaDao(this);
         receitaDao.salvar(receita);
 
+    }
+
+    private Receita listarReceita(Long id){
+        ReceitaDao receitaDao = new ReceitaDao(this);
+        return receitaDao.listarReceita(buscarUsuarioSessao(), id);
     }
 
     private void validarReceita(Receita receita) throws Exception{

@@ -47,6 +47,7 @@ public class ReceitaDao {
     public void salvar(Receita receita) throws Exception{
 
         SQLiteDatabase db = criarConexaoWrite();
+        long rs;
 
         ContentValues valores = new ContentValues();
         valores.put(NOME, receita.getNome());
@@ -54,7 +55,20 @@ public class ReceitaDao {
         valores.put(PREPARO, receita.getModoPreparo());
         valores.put(PATHIMAGEM, receita.getPathImagem());
         valores.put(USUARIOID, receita.getUsuarioId());
-        long rs = db.insert(TABLE, null, valores);
+
+        if(receita.getId() == null) { // insert
+
+            rs = db.insert(TABLE, null, valores);
+
+        }else{  // update
+
+            String where = "USUARIO_ID = ? AND _ID = ?";
+            String argumentos[] = { receita.getUsuarioId().toString(), receita.getId().toString() };
+
+            valores.put(ID, receita.getId());
+            rs = db.update(TABLE, valores, where, argumentos);
+
+        }
 
         db.close();
 
@@ -107,4 +121,61 @@ public class ReceitaDao {
         return listaReceitas;
     }
 
+
+
+
+    public Receita listarReceita(Long usuarioId, Long id){
+
+        SQLiteDatabase db = criarConexaoRead();
+
+        Receita receita = new Receita();
+
+        Cursor cursor =  db.rawQuery("SELECT "+ ID + ", " + NOME + ", "
+                + INGREDIENTE + ", "
+                + PREPARO + ", "
+                + PATHIMAGEM +
+                " FROM " +  TABLE + " where " + USUARIOID  + " = " + usuarioId +
+                " AND " + ID + " = " + id,  null);
+
+
+        //move cursor para primeiro registro
+        cursor.moveToFirst();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+
+
+            receita.setId(Long.valueOf(String.valueOf(cursor.getInt(0))));
+            receita.setNome(cursor.getString(1));
+            receita.setIngrediente(cursor.getString(2));
+            receita.setModoPreparo(cursor.getString(3));
+            receita.setPathImagem(cursor.getString(4));
+            receita.setUsuarioId(usuarioId);
+
+            //move cursor proximo registro
+            cursor.moveToNext();
+        }
+
+        //fecha cursor
+        cursor.close();
+
+        return receita;
+    }
+
+    public void deletar(Long usuarioId, Long idReceita) throws Exception{
+
+        SQLiteDatabase db = criarConexaoWrite();
+        long rs;
+
+        String where = "USUARIO_ID = ? AND _ID = ?";
+        String argumentos[] = { usuarioId.toString(), idReceita.toString() };
+
+        rs = db.delete(TABLE, where, argumentos);
+
+        db.close();
+
+        if (rs == -1) {
+            throw new Exception("Receita não excluída. -1");
+        }
+
+    }
 }

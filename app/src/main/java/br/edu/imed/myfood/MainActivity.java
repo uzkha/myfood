@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -66,9 +67,13 @@ public class MainActivity extends AbstractActivity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position,
                                     long arg3) {
+                // Buscar alguma view dentro deste item
+                TextView txId = (TextView) v.findViewById(R.id.txId);
+                String id = txId.getText().toString().trim();
 
-
-                showMessage("clique item " + position, Toast.LENGTH_LONG);
+                Intent intent = new Intent(MainActivity.this, ReceitaActivity.class);
+                intent.putExtra("ID", id);
+                startActivity(intent);
 
             }
         });
