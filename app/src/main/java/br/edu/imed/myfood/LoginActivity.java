@@ -46,6 +46,11 @@ public class LoginActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @throws Exception
+     * Captura o email e senha nos inputs do formulário de login
+     * para validar as informações e logar ou retornar erro para o usuário
+     */
     private void logar() throws Exception{
 
             EditText edEmail = (EditText) findViewById(R.id.edEmailLogin);
@@ -70,6 +75,12 @@ public class LoginActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @param email
+     * @param senha
+     * @return
+     * Cria o objeto DAO para pesquisa e validação das informações de login
+     */
     private Long validarLogin(String email, String senha) {
 
         UsuarioDao usuarioDao = new UsuarioDao(this);
@@ -78,6 +89,10 @@ public class LoginActivity extends AbstractActivity {
     }
 
 
+    /**
+     * @throws Exception
+     * Cria o alertDialog que possibilida a inclusão de um novo usuário
+     */
     private void cadastrar() throws Exception{
 
             LayoutInflater li = getLayoutInflater();
@@ -132,6 +147,11 @@ public class LoginActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @param email
+     * @param senha
+     * Seta na View de Login os dados do novo usuário incluido
+     */
     private void setarEmail(String email, String senha) {
 
         EditText edEmail = (EditText) findViewById(R.id.edEmailLogin);
@@ -141,6 +161,12 @@ public class LoginActivity extends AbstractActivity {
         edSenha.setText(senha);
     }
 
+
+    /**
+     * @param usuario
+     * @throws Exception
+     * Valida as informações digitadas no formulário para criação de um usuário
+     */
     private void validarUsuario(Usuario usuario) throws Exception{
 
         if(usuario.getNome().length() < 1){
@@ -161,6 +187,12 @@ public class LoginActivity extends AbstractActivity {
 
     }
 
+
+    /**
+     * @param usuario
+     * @throws Exception
+     * Cria o objeto DAO para instanciar o metodo salvar no banco de dados para o usuário
+     */
     private void salvarUsuario(Usuario usuario) throws Exception{
 
         UsuarioDao usuarioDao = new UsuarioDao(this);
@@ -168,6 +200,15 @@ public class LoginActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @param id
+     * @param nome
+     * @param email
+     * @param senha
+     * @param senhaCfm
+     * @return
+     * Recebe os dados do usuário para criação do objeto Usuario
+     */
     private Usuario criarObjetoUsuario(Long id, String nome, String email, String senha, String senhaCfm){
 
         Usuario usuario = new Usuario();

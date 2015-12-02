@@ -18,6 +18,10 @@ public class AbstractActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * @param id
+     * Recebe o ID do usuário para setar na preferencia compartilhada o ID do usuário logado na aplicação
+     */
     void setarUsuarioSessao(Long id) {
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -29,6 +33,11 @@ public class AbstractActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * @return
+     * Busca o usuário logado na aplicação. Retorna 0 caso não existe usuário logado.
+     */
     Long buscarUsuarioSessao(){
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);

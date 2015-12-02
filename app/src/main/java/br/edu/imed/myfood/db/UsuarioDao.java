@@ -29,16 +29,30 @@ public class UsuarioDao {
         this.context = context;
     }
 
+    /**
+     * @return
+     * Cria uma conexão de escrita no banco de dados
+     */
     private SQLiteDatabase criarConexaoWrite(){
         SQLiteDatabase db = new DataBaseHelper(this.context).getWritableDatabase();
         return db;
     }
 
+
+    /**
+     * @return
+     * Cria uma conexão de leitura no banco de dados
+     */
     private SQLiteDatabase criarConexaoRead(){
         SQLiteDatabase db = new DataBaseHelper(this.context).getReadableDatabase();
         return db;
     }
 
+    /**
+     * @param usuario
+     * @throws Exception
+     * Recebe um objeto usuario para fazer a inclusão no banco de dados
+     */
     public void salvar(Usuario usuario) throws Exception{
 
         SQLiteDatabase db = criarConexaoWrite();
@@ -57,6 +71,13 @@ public class UsuarioDao {
 
     }
 
+
+    /**
+     * @param email
+     * @param senha
+     * @return
+     * Recebe o email e senha do usuário para fazer a validação do login
+     */
     public Long validarLogin(String email, String senha){
 
         Long usuarioId = Long.valueOf(0);

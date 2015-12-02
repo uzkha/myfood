@@ -106,6 +106,9 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * Metodo deletar criar o AlertDialog para confirmar a exclusão do registro
+     */
     private void deletar(){
 
         new AlertDialog.Builder(this)
@@ -128,6 +131,12 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @throws Exception
+     * Metodo deletarReceita cria o receitaDao para comunicação com o banco de dados
+     * chamando o deletar para exclusão do registro
+     * Exclui a imagem no diretorio salvo
+     */
     private void deletarReceita() throws Exception{
 
         ReceitaDao receitaDao = new ReceitaDao(this);
@@ -140,14 +149,20 @@ public class ReceitaActivity extends AbstractActivity {
         //deleta a receita no banco de dados
         receitaDao.deletar(buscarUsuarioSessao(), idReceita);
 
-        //deleta a imagem
-        File f = new File(path);
-        f.delete();
+        if (path != null) {
+            //deleta a imagem
+            File f = new File(path);
+            f.delete();
+        }
 
         showMessage("Receita excluida com sucesso!", Toast.LENGTH_LONG);
         finish();
     }
 
+    /**
+     * Metodo montarReceitaView monta a View da Receita no modo update
+     * buscando a receita no banco de dados para montar os dados em tela
+     */
     private void montarReceitaView() {
 
         try {
@@ -172,7 +187,7 @@ public class ReceitaActivity extends AbstractActivity {
 
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
 
-                bitmap = Bitmap.createScaledBitmap(bitmap, 300, 400, false);
+                bitmap = Bitmap.createScaledBitmap(bitmap, 400, 300, false);
 
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setImageBitmap(bitmap);
@@ -185,6 +200,9 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * Chama a Activity do Android para abrir a galeria de imagens do dispositivo
+     */
     private void capturarImagemGallery() {
 
         Intent intent = new Intent();
@@ -195,6 +213,10 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * Chama a Activity do Android para abrir a camera do dispositivo
+     * que retornará a imagem da foto criada
+     */
     private void capturarImagem() {
 
         nome = new java.util.Date().toString() + ".jpg";
@@ -209,6 +231,12 @@ public class ReceitaActivity extends AbstractActivity {
     }
 
 
+    /**
+     * @param in
+     * @throws IOException
+     * Copia uma imagem da galeria do dispositivo para a pasta de imagens
+     * da aplicação
+     */
     public void copy(InputStream in) throws IOException {
 
         File direct = new File(PATH);
@@ -252,7 +280,7 @@ public class ReceitaActivity extends AbstractActivity {
 
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
 
-                bitmap = Bitmap.createScaledBitmap(bitmap, 300, 400, false);
+                bitmap = Bitmap.createScaledBitmap(bitmap, 400, 300, false);
 
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setImageBitmap(bitmap);
@@ -289,6 +317,11 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @throws Exception
+     * Metodo captura os valores inseridos nos inputs da view
+     * para criar o objeto Receita e invocar o metodo salvar do Dao.
+     */
     private void salvar() throws Exception{
 
         EditText edNome = (EditText) findViewById(R.id.edNomeReceita);
@@ -308,6 +341,11 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @param receita
+     * @throws Exception
+     * Cria o objeto Dao para executar o metodo salvar
+     */
     private void salvarReceita(Receita receita) throws Exception {
 
         ReceitaDao receitaDao = new ReceitaDao(this);
@@ -315,11 +353,22 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @param id
+     * @return
+     * Recebe o ID da receita e cria o objeto DAO para acesso ao banco de dados
+     * fazendo select para retornar o objeto Receita populado com seus dados
+     */
     private Receita listarReceita(Long id){
         ReceitaDao receitaDao = new ReceitaDao(this);
         return receitaDao.listarReceita(buscarUsuarioSessao(), id);
     }
 
+    /**
+     * @param receita
+     * @throws Exception
+     * Valida os dados inseridos no formulário da View de Receita
+     */
     private void validarReceita(Receita receita) throws Exception{
 
         if(receita.getNome().length() < 1){
@@ -336,6 +385,15 @@ public class ReceitaActivity extends AbstractActivity {
 
     }
 
+    /**
+     * @param id - Id da Receita
+     * @param nome - Nome da receita
+     * @param ingrediente - Ingredientes da receita
+     * @param preparo - modo de preparo da receita
+     * @param pathImagem - caminho fisico da imagem
+     * @return
+     * Recebe os dados da receita para criar o objeto Receita
+     */
     private Receita criarObjetoReceita(Long id, String nome, String ingrediente, String preparo, String pathImagem) {
 
         Receita receita = new Receita();

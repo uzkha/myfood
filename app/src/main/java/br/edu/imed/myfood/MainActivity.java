@@ -89,7 +89,9 @@ public class MainActivity extends AbstractActivity {
     }
 
 
-
+    /**
+     * Monta a View Adapter para listagem das receitas
+     */
     private void montarAdapter() {
 
         lista = listarReceita();
@@ -100,6 +102,12 @@ public class MainActivity extends AbstractActivity {
         listView.setAdapter(adapter);
     }
 
+
+    /**
+     * @return
+     * Cria o objeto DAO para pesquisa de todas as receitas do Usuário
+     * Retornando uma lista de receitas
+     */
     private List<Receita> listarReceita() {
 
         ReceitaDao receitaDao = new ReceitaDao(this);
@@ -107,11 +115,19 @@ public class MainActivity extends AbstractActivity {
 
     }
 
+    /**
+     * Chama a Intent para criar uma nova receita
+     */
     private void adicionarReceita() {
         Intent i = new Intent(MainActivity.this, ReceitaActivity.class);
         startActivity(i);
     }
 
+
+    /**
+     * Executa o logout do usuário logado,
+     * limpando as preferencias do arquivo SharedPreference
+     */
     private void logout() {
         setarUsuarioSessao(Long.valueOf(0));
         finish();

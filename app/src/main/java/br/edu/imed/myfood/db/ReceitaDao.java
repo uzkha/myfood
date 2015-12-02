@@ -34,16 +34,30 @@ public class ReceitaDao {
         this.context = context;
     }
 
+    /**
+     * @return
+     * Cria a conexão para escrita no banco de dados
+     */
     private SQLiteDatabase criarConexaoWrite(){
         SQLiteDatabase db = new DataBaseHelper(this.context).getWritableDatabase();
         return db;
     }
 
+    /**
+     * @return
+     * Cria a conexão para leitura no banco de dados
+     */
     private SQLiteDatabase criarConexaoRead(){
         SQLiteDatabase db = new DataBaseHelper(this.context).getReadableDatabase();
         return db;
     }
 
+    /**
+     * @param receita
+     * @throws Exception
+     * Salva o objeto Receita no banco de dados. Verifica a existencia do atributo ID
+     * para realizar o INSERT ou UPDATE da receita.
+     */
     public void salvar(Receita receita) throws Exception{
 
         SQLiteDatabase db = criarConexaoWrite();
@@ -79,7 +93,11 @@ public class ReceitaDao {
     }
 
 
-
+    /**
+     * @param usuarioId
+     * @return
+     * Lista todas as receitas cadastradas para o usuário
+     */
     public List<Receita> listarReceitas(Long usuarioId){
 
         SQLiteDatabase db = criarConexaoRead();
@@ -122,8 +140,12 @@ public class ReceitaDao {
     }
 
 
-
-
+    /**
+     * @param usuarioId
+     * @param id
+     * @return
+     * Lista uma receita através do ID recebido da receita e do usuário
+     */
     public Receita listarReceita(Long usuarioId, Long id){
 
         SQLiteDatabase db = criarConexaoRead();
@@ -161,6 +183,12 @@ public class ReceitaDao {
         return receita;
     }
 
+    /**
+     * @param usuarioId
+     * @param idReceita
+     * @throws Exception
+     * Deleta uma receita do banco de dados atraveś do ID recebido da receita e do usuário
+     */
     public void deletar(Long usuarioId, Long idReceita) throws Exception{
 
         SQLiteDatabase db = criarConexaoWrite();
