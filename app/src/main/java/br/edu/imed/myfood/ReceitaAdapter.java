@@ -23,7 +23,7 @@ import br.edu.imed.myfood.model.Receita;
 /**
  * Created by diogo on 14/11/2015.
  */
-public class ReceitaAdapter extends ArrayAdapter<Receita> {
+public class ReceitaAdapter extends ArrayAdapter<Receita>{
 
     public ReceitaAdapter(Context context, List<Receita> lista) {
         super(context, R.layout.row_item_receita, lista);
@@ -51,7 +51,13 @@ public class ReceitaAdapter extends ArrayAdapter<Receita> {
 
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
 
-                bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+
+                int divisor = Auxiliar.calcularDivisao(width) * 4;
+
+                bitmap = Bitmap.createScaledBitmap(bitmap, (width / divisor), (height / divisor), false);
+
 
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setImageBitmap(bitmap);

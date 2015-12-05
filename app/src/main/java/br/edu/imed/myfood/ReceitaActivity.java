@@ -38,6 +38,9 @@ public class ReceitaActivity extends AbstractActivity {
     File file;
     String pathImagem;
     Long idReceita;
+    int divisor;
+    int width;
+    int height;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +190,12 @@ public class ReceitaActivity extends AbstractActivity {
 
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
 
-                bitmap = Bitmap.createScaledBitmap(bitmap, 400, 300, false);
+                width = bitmap.getWidth();
+                height = bitmap.getHeight();
+
+                divisor = Auxiliar.calcularDivisao(width);
+
+                bitmap = Bitmap.createScaledBitmap(bitmap, (width / divisor), (height / divisor), false);
 
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setImageBitmap(bitmap);
@@ -280,7 +288,12 @@ public class ReceitaActivity extends AbstractActivity {
 
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
 
-                bitmap = Bitmap.createScaledBitmap(bitmap, 400, 300, false);
+                width = bitmap.getWidth();
+                height = bitmap.getHeight();
+
+                divisor = Auxiliar.calcularDivisao(width);
+
+                bitmap = Bitmap.createScaledBitmap(bitmap, (width / divisor), (height / divisor), false);
 
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setImageBitmap(bitmap);
@@ -300,18 +313,25 @@ public class ReceitaActivity extends AbstractActivity {
 
         if (requestCode == 2 && resultCode == RESULT_OK) {
 
-            Bitmap myBitmap = null;
+            Bitmap bitmap = null;
+
+
             try {
-                myBitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+                bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 showMessage(e.getMessage(), Toast.LENGTH_SHORT);
             }
 
-            myBitmap = Bitmap.createScaledBitmap(myBitmap, 300, 400, false);
+            width = bitmap.getWidth();
+            height = bitmap.getHeight();
+
+            divisor = Auxiliar.calcularDivisao(width);
+
+            bitmap = Bitmap.createScaledBitmap(bitmap, (width / divisor), (height / divisor), false);
 
             ImageView imageView = (ImageView) findViewById(R.id.imvReceita);
-            imageView.setImageBitmap(myBitmap);
+            imageView.setImageBitmap(bitmap);
 
         }
 
