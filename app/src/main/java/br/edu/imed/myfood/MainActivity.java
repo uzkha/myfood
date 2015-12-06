@@ -51,7 +51,6 @@ public class MainActivity extends AbstractActivity {
             public void onClick(View v) {
                 try {
                     adicionarReceita();
-                    montarAdapter();
                 } catch (Exception e) {
                     showMessage(e.getMessage(), Toast.LENGTH_SHORT);
                 }
@@ -73,7 +72,7 @@ public class MainActivity extends AbstractActivity {
 
                 Intent intent = new Intent(MainActivity.this, ReceitaActivity.class);
                 intent.putExtra("ID", id);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
 
             }
         });
@@ -82,12 +81,17 @@ public class MainActivity extends AbstractActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        montarAdapter();
+    }
+
+ /*   @Override
     public void onResume(){
 
         montarAdapter();
         super.onResume();
 
-    }
+    }*/
 
 
     /**
@@ -121,7 +125,7 @@ public class MainActivity extends AbstractActivity {
      */
     private void adicionarReceita() {
         Intent i = new Intent(MainActivity.this, ReceitaActivity.class);
-        startActivity(i);
+        startActivityForResult(i, 1);
     }
 
 

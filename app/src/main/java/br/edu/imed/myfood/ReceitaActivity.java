@@ -65,7 +65,7 @@ public class ReceitaActivity extends AbstractActivity {
         findViewById(R.id.btnFechar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+               finalizar();
             }
         });
 
@@ -78,7 +78,7 @@ public class ReceitaActivity extends AbstractActivity {
 
                     showMessage("Receita salva com sucesso", Toast.LENGTH_SHORT);
 
-                    finish();
+                   finalizar();
 
                 } catch (Exception e) {
                     showMessage(e.getMessage(), Toast.LENGTH_SHORT);
@@ -147,18 +147,25 @@ public class ReceitaActivity extends AbstractActivity {
         //busca a receita
         Receita receita = receitaDao.listarReceita(buscarUsuarioSessao(), idReceita);
 
-        String path = receita.getPathImagem();
+        pathImagem = receita.getPathImagem();
 
         //deleta a receita no banco de dados
         receitaDao.deletar(buscarUsuarioSessao(), idReceita);
 
-        if (path != null) {
+        if (pathImagem != null) {
             //deleta a imagem
-            File f = new File(path);
+            File f = new File(pathImagem);
             f.delete();
         }
 
         showMessage("Receita excluida com sucesso!", Toast.LENGTH_LONG);
+        finalizar();
+    }
+
+    private void finalizar() {
+
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK,returnIntent);
         finish();
     }
 
@@ -180,13 +187,13 @@ public class ReceitaActivity extends AbstractActivity {
             edIngrediente.setText(receita.getIngrediente());
             edPreparo.setText(receita.getModoPreparo());
 
-            String path = receita.getPathImagem();
+            pathImagem = receita.getPathImagem();
 
-            if (path != null) {
+            if (pathImagem != null) {
 
                 ImageView imageView = (ImageView) findViewById(R.id.imvReceita);
 
-                InputStream inputStreamBmp = new FileInputStream(path);
+                InputStream inputStreamBmp = new FileInputStream(pathImagem);
 
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStreamBmp);
 
@@ -227,11 +234,21 @@ public class ReceitaActivity extends AbstractActivity {
      */
     private void capturarImagem() {
 
+        File direct = new File(PATH);
+
+        if (!direct.exists()) {
+            direct.mkdirs();
+        }
+
         nome = new java.util.Date().toString() + ".jpg";
+
+        nome = nome.replace(" ", "");
+        nome = nome.replace(":", "");
 
         pathImagem = PATH + nome;
 
         file = new File(pathImagem);
+
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
         startActivityForResult(cameraIntent, 2);
@@ -253,7 +270,7 @@ public class ReceitaActivity extends AbstractActivity {
             direct.mkdirs();
         }
 
-        File file = new File(pathImagem);
+        file = new File(pathImagem);
 
         OutputStream out = new FileOutputStream(file);
 
@@ -313,25 +330,26 @@ public class ReceitaActivity extends AbstractActivity {
 
         if (requestCode == 2 && resultCode == RESULT_OK) {
 
-            Bitmap bitmap = null;
-
-
             try {
+
+                Bitmap bitmap = null;
+
                 bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
-            } catch (FileNotFoundException e) {
+
+                width = bitmap.getWidth();
+                height = bitmap.getHeight();
+
+                divisor = Auxiliar.calcularDivisao(width);
+
+                bitmap = Bitmap.createScaledBitmap(bitmap, (width / divisor), (height / divisor), false);
+
+                ImageView imageView = (ImageView) findViewById(R.id.imvReceita);
+                imageView.setImageBitmap(bitmap);
+
+            } catch (Exception e) {
                 e.printStackTrace();
                 showMessage(e.getMessage(), Toast.LENGTH_SHORT);
             }
-
-            width = bitmap.getWidth();
-            height = bitmap.getHeight();
-
-            divisor = Auxiliar.calcularDivisao(width);
-
-            bitmap = Bitmap.createScaledBitmap(bitmap, (width / divisor), (height / divisor), false);
-
-            ImageView imageView = (ImageView) findViewById(R.id.imvReceita);
-            imageView.setImageBitmap(bitmap);
 
         }
 
